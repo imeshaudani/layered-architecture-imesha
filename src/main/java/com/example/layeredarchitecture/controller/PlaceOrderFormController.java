@@ -1,5 +1,7 @@
 package com.example.layeredarchitecture.controller;
 
+import com.example.layeredarchitecture.dao.CustomerDAO;
+import com.example.layeredarchitecture.dao.CustomerDAOImpl;
 import com.example.layeredarchitecture.db.DBConnection;
 import com.example.layeredarchitecture.model.CustomerDTO;
 import com.example.layeredarchitecture.model.ItemDTO;
@@ -49,6 +51,7 @@ public class PlaceOrderFormController {
     public Label lblTotal;
     private String orderId;
 
+    //CustomerDAO customerDAO = new CustomerDAO();
     public void initialize() throws SQLException, ClassNotFoundException {
 
         tblOrderDetails.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("code"));
@@ -211,7 +214,7 @@ public class PlaceOrderFormController {
         return "OID-001";
     }
 
-    private void loadAllCustomerIds() {
+    private void loadAllCustomerIds() {//customerdaoimpl hadanne
         try {
             Connection connection = DBConnection.getDbConnection().getConnection();
             Statement stm = connection.createStatement();
@@ -397,7 +400,7 @@ public class PlaceOrderFormController {
     }
 
 
-    public ItemDTO findItem(String code) {
+    public ItemDTO findItem(String code) { //itemdasoimpl
         try {
             Connection connection = DBConnection.getDbConnection().getConnection();
             PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Item WHERE code=?");
