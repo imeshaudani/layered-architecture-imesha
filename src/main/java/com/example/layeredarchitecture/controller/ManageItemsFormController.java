@@ -75,17 +75,20 @@ public class ManageItemsFormController {
 
     private void loadAllItems() {
         tblItems.getItems().clear();
+        /*Get all items*/
         try {
             //ItemDAO itemDAO = new ItemDAOImpl();
             ArrayList<ItemDTO> allItem = itemDAO.getAllItem();
             for (ItemDTO dto : allItem) {
-                tblItems.getItems().add(new ItemTM(
-                        dto.getCode(),
-                        dto.getDescription(),
-                        dto.getUnitPrice(),
-                        dto.getQtyOnHand()
-                ));
+                tblItems.getItems().add(
+                        new ItemTM(
+                                dto.getCode(),
+                                dto.getDescription(),
+                                dto.getUnitPrice(),
+                                dto.getQtyOnHand()
+                        ));
             }
+
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         } catch (ClassNotFoundException e) {
@@ -141,13 +144,8 @@ public class ManageItemsFormController {
             if (!existItem(code)) {
                 new Alert(Alert.AlertType.ERROR, "There is no such item associated with the id " + code).show();
             }
-            /*Connection connection = DBConnection.getDbConnection().getConnection();
-            PreparedStatement pstm = connection.prepareStatement("DELETE FROM Item WHERE code=?");
-            pstm.setString(1, code);
-            pstm.executeUpdate();*/
-
-            //ItemDAO impl = new ItemDAOImpl();
-            boolean isdelete = itemDAO.deleteItem(code);
+            //ItemDAO itemDAO=new ItemDAOImpl();
+            itemDAO.delete(code);
 
             tblItems.getItems().remove(tblItems.getSelectionModel().getSelectedItem());
             tblItems.getSelectionModel().clearSelection();
@@ -187,10 +185,11 @@ public class ManageItemsFormController {
                     new Alert(Alert.AlertType.ERROR, code + " already exists").show();
                 }
                 //Save Item
-                //ItemDAO impl = new ItemDAOImpl();
-                itemDAO.saveItem(new ItemDTO(code,description,unitPrice,qtyOnHand));
-                tblItems.getItems().add(new ItemTM(code, description, unitPrice, qtyOnHand));
-
+                //ItemDAO itemdae = new ItemDAOImpl();
+                boolean isSaved = itemDAO.saveitem(new ItemDTO(code,description,unitPrice,qtyOnHand));
+                if (isSaved) {
+                    tblItems.getItems().add(new ItemTM(code,description,unitPrice,qtyOnHand));
+                }
 
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -204,16 +203,7 @@ public class ManageItemsFormController {
                     new Alert(Alert.AlertType.ERROR, "There is no such item associated with the id " + code).show();
                 }
                 /*Update Item*/
-               /*Connection connection = DBConnection.getDbConnection().getConnection();
-                PreparedStatement pstm = connection.prepareStatement("UPDATE Item SET description=?, unitPrice=?, qtyOnHand=? WHERE code=?");
-                pstm.setString(1, description);
-                pstm.setBigDecimal(2, unitPrice);
-                pstm.setInt(3, qtyOnHand);
-                pstm.setString(4, code);
-                pstm.executeUpdate();*/
-
-                //ItemDAOImpl impl = new ItemDAOImpl();
-                ItemDTO dto = new ItemDTO(code,description,unitPrice,qtyOnHand);
+                //ItemDAO impl = new ItemDAOImpl();
                 itemDAO.updateItem(new ItemDTO(code,description,unitPrice,qtyOnHand));
 
                 ItemTM selectedItem = tblItems.getSelectionModel().getSelectedItem();
@@ -233,23 +223,16 @@ public class ManageItemsFormController {
 
 
     private boolean existItem(String code) throws SQLException, ClassNotFoundException {
-        /*Connection connection = DBConnection.getDbConnection().getConnection();
-        PreparedStatement pstm = connection.prepareStatement("SELECT code FROM Item WHERE code=?");
-        pstm.setString(1, code);
-        return pstm.executeQuery().next();*/
-
-        //ItemDAOImpl impl = new ItemDAOImpl();
+        //ItemDAO itemDAO =new ItemDAOImpl();
         return itemDAO.existItem(code);
+
     }
 
 
     private String generateNewId() {
         try {
-            /*Connection connection = DBConnection.getDbConnection().getConnection();
-            ResultSet rst = connection.createStatement().executeQuery("SELECT code FROM Item ORDER BY code DESC LIMIT 1;");*/
-            //ItemDAO impl = new ItemDAOImpl();
-            return itemDAO.generateId();
-
+            //ItemDAO itemDAO=new ItemDAOImpl();
+            return itemDAO.generateID();
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         } catch (ClassNotFoundException e) {
